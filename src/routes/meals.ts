@@ -6,8 +6,11 @@ import { z } from 'zod'
 import { parseDateTime } from '../utils/parseDateTime'
 
 export async function mealsRoutes(app: FastifyInstance) {
-  app.get('/', { preHandler: [checkUserIdExist] }, async () => {
-    return console.log('cheguei aqui')
+  app.get('/', { preHandler: [checkUserIdExist] }, async (request) => {
+    const userId = request.cookies.userId
+
+    const meals = await db('meals').where('user_id', userId).select()
+    return { meals }
   })
 
   app.delete(
