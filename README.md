@@ -10,7 +10,7 @@
 - [x] O usuário deve poder editar uma refeição
 - [x] O usuário deve poder apagar uma refeição
 - [x] O usuário deve poder listar todas as refeições cadastradas
-- [ ] O usuário deve poder visualizar uma refeição específica
+- [x] O usuário deve poder visualizar uma refeição específica
 - [ ] O usuário deve poder visualizar métricas das suas refeições
 - [ ] O sistema deve informar a quantidade total de refeições registradas
 - [ ] O sistema deve informar a quantidade total de refeições dentro da dieta

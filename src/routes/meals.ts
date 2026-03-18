@@ -13,6 +13,33 @@ export async function mealsRoutes(app: FastifyInstance) {
     return { meals }
   })
 
+  app.get(
+    '/:id',
+    { preHandler: [checkUserIdExist] },
+    async (request, reply) => {
+      const userId = request.cookies.userId
+
+      const getParamsRequestSchema = z.object({
+        id: z.string().uuid(),
+      })
+
+      const { id } = getParamsRequestSchema.parse(request.params)
+
+      const meal = await db('meals')
+        .where({
+          id,
+          user_id: userId,
+        })
+        .first()
+
+      if (!meal) {
+        return reply.status(404).send({ error: 'Refeição não encontrada' })
+      }
+
+      return { meal }
+    },
+  )
+
   app.delete(
     '/:id',
     { preHandler: [checkUserIdExist] },
