@@ -4,7 +4,7 @@ import { db } from '../database'
 import { checkUserIdExist } from '../middlewares/check-user-id-exist'
 import { z } from 'zod'
 import { parseDateTime } from '../utils/parseDateTime'
-import { formatDateTime } from '../utils/formatDateTime'
+import { formatMeal } from '../utils/formatMeal'
 
 export async function mealsRoutes(app: FastifyInstance) {
   app.get('/', { preHandler: [checkUserIdExist] }, async (request) => {
@@ -15,17 +15,7 @@ export async function mealsRoutes(app: FastifyInstance) {
       .orderBy('consumed_at', 'desc')
       .select()
 
-    const formattedMeals = meals.map((meal) => {
-      const { date, time } = formatDateTime(meal.consumed_at)
-
-      return {
-        id: meal.id,
-        name: meal.name,
-        time,
-        isOnDiet: meal.is_on_diet,
-        date,
-      }
-    })
+    const formattedMeals = meals.map(formatMeal)
 
     const grouped = formattedMeals.reduce((acc, meal) => {
       const existingDate = acc.find((item) => item.date === meal.date)
@@ -44,7 +34,6 @@ export async function mealsRoutes(app: FastifyInstance) {
             {
               id: meal.id,
               name: meal.name,
-              date: meal.date,
               time: meal.time,
               isOnDiet: meal.isOnDiet,
             },
@@ -82,7 +71,8 @@ export async function mealsRoutes(app: FastifyInstance) {
         return reply.status(404).send({ error: 'Refeição não encontrada' })
       }
 
-      return { meal }
+      const mealFormated = formatMeal(meal)
+      return { meal: mealFormated }
     },
   )
 
@@ -269,4 +259,35 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     return { onDietPercentage, bestSequence, melasCount, onDiet, outDiet }
   })
+
+  app.get(
+    '/stats/percentage',
+    { preHandler: [checkUserIdExist] },
+    async (request) => {
+      const userId = request.cookies.userId
+
+      const onDietResult = await db('meals')
+        .where({
+          user_id: userId,
+          is_on_diet: true,
+        })
+        .count({ count: '*' })
+        .first()
+
+      const outDietResult = await db('meals')
+        .where({
+          user_id: userId,
+          is_on_diet: false,
+        })
+        .count({ count: '*' })
+        .first()
+
+      const onDiet = Number(onDietResult?.count ?? 0)
+      const outDiet = Number(outDietResult?.count ?? 0)
+      const melasCount = onDiet + outDiet
+      const onDietPercentage = Number(((onDiet / melasCount) * 100).toFixed(2))
+
+      return { percentage: onDietPercentage }
+    },
+  )
 }
