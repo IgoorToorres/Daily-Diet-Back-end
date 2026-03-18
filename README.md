@@ -3,11 +3,11 @@
 - [x] O usuário deve poder ser identificado automaticamente entre as requisições via cookie (user_id)
 - [x] O sistema deve gerar um usuário automaticamente ao primeiro acesso caso não exista cookie
 - [x] O usuário deve poder registrar uma nova refeição
-- [ ] O usuário deve poder informar o nome da refeição
-- [ ] O usuário deve poder informar a descrição da refeição
-- [ ] O usuário deve poder informar a data e hora da refeição (campo único: consumed_at)
-- [ ] O usuário deve poder informar se a refeição está dentro ou fora da dieta
-- [ ] O usuário deve poder editar uma refeição
+- [x] O usuário deve poder informar o nome da refeição
+- [x] O usuário deve poder informar a descrição da refeição
+- [x] O usuário deve poder informar a data e hora da refeição (campo único: consumed_at)
+- [x] O usuário deve poder informar se a refeição está dentro ou fora da dieta
+- [x] O usuário deve poder editar uma refeição
 - [ ] O usuário deve poder apagar uma refeição
 - [ ] O usuário deve poder listar todas as refeições cadastradas
 - [ ] O usuário deve poder visualizar uma refeição específica
