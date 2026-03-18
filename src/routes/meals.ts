@@ -2,6 +2,8 @@ import type { FastifyInstance } from 'fastify'
 import { randomUUID } from 'node:crypto'
 import { db } from '../database'
 import { checkUserIdExist } from '../middlewares/check-user-id-exist'
+import { z } from 'zod'
+import { parseDateTime } from '../utils/parseDateTime'
 
 export async function mealsRoutes(app: FastifyInstance) {
   app.get('/', { preHandler: [checkUserIdExist] }, async () => {
@@ -9,11 +11,25 @@ export async function mealsRoutes(app: FastifyInstance) {
   })
 
   app.post('/', async (request, reply) => {
+    // cirando schema do zod para validacao dos dados do body
+    const createMealBodySchema = z.object({
+      name: z.string(),
+      description: z.string(),
+      date: z.string(),
+      time: z.string(),
+      isOnDiet: z.boolean(),
+    })
+
+    // resgatando valores do body se passarem pela validacao
+    const { name, description, date, time, isOnDiet } =
+      createMealBodySchema.parse(request.body)
+
+    // verificando se existe o cookie, caso não, cria um novo
     let userId = request.cookies.userId
     if (!userId) {
       userId = randomUUID()
       await db('users').insert({
-        id: randomUUID(),
+        id: userId,
       })
       reply.cookie('userId', userId, {
         path: '/',
@@ -21,8 +37,24 @@ export async function mealsRoutes(app: FastifyInstance) {
       })
     }
 
+    // convertendo date e time para um campo só no banco
+    // eslint-disable-next-line camelcase
+    const consumed_at = parseDateTime(date, time)
+
+    // gravando dados do body no banco
+    await db('meals').insert({
+      id: randomUUID(),
+      user_id: userId,
+      name,
+      description,
+      // eslint-disable-next-line camelcase
+      consumed_at,
+      is_on_diet: isOnDiet,
+    })
+
+    // resposta
     return reply.status(201).send({
-      message: 'usuario cadastrado com sucesso',
+      message: 'Refeição cadastrada com sucesso',
     })
   })
 }
