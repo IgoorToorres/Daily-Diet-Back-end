@@ -4,13 +4,59 @@ import { db } from '../database'
 import { checkUserIdExist } from '../middlewares/check-user-id-exist'
 import { z } from 'zod'
 import { parseDateTime } from '../utils/parseDateTime'
+import { formatDateTime } from '../utils/formatDateTime'
 
 export async function mealsRoutes(app: FastifyInstance) {
   app.get('/', { preHandler: [checkUserIdExist] }, async (request) => {
     const userId = request.cookies.userId
 
-    const meals = await db('meals').where('user_id', userId).select()
-    return { meals }
+    const meals = await db('meals')
+      .where('user_id', userId)
+      .orderBy('consumed_at', 'desc')
+      .select()
+
+    const formattedMeals = meals.map((meal) => {
+      const { date, time } = formatDateTime(meal.consumed_at)
+
+      return {
+        id: meal.id,
+        name: meal.name,
+        time,
+        isOnDiet: meal.is_on_diet,
+        date,
+      }
+    })
+
+    const grouped = formattedMeals.reduce((acc, meal) => {
+      const existingDate = acc.find((item) => item.date === meal.date)
+
+      if (existingDate) {
+        existingDate.meals.push({
+          id: meal.id,
+          name: meal.name,
+          time: meal.time,
+          isOnDiet: meal.isOnDiet,
+        })
+      } else {
+        acc.push({
+          date: meal.date,
+          meals: [
+            {
+              id: meal.id,
+              name: meal.name,
+              date: meal.date,
+              time: meal.time,
+              isOnDiet: meal.isOnDiet,
+            },
+          ],
+        })
+      }
+
+      return acc
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }, [] as any[])
+
+    return { meals: grouped }
   })
 
   app.get(
