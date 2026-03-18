@@ -1,0 +1,31 @@
+{
+  "name": "dailydiet-back-end",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IgoorToorres/Daily-Diet-Back-end.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IgoorToorres/Daily-Diet-Back-end/issues"
+  },
+  "homepage": "https://github.com/IgoorToorres/Daily-Diet-Back-end#readme",
+  "description": "",
+  "dependencies": {
+    "@rocketseat/eslint-config": "^2.2.2",
+    "@types/node": "^25.5.0",
+    "dotenv": "^17.3.1",
+    "eslint": "^8.57.1",
+    "fastify": "^5.8.2",
+    "knex": "^3.1.0",
+    "sqlite3": "^6.0.1",
+    "tsx": "^4.21.0",
+    "zod": "^4.3.6"
+  }
+}
