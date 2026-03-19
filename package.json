@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "knex": "node --import tsx ./node_modules/knex/bin/cli.js",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
