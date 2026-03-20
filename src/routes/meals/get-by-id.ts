@@ -3,11 +3,12 @@ import { checkUserIdExist } from '../../middlewares/check-user-id-exist'
 import { db } from '../../database'
 import { formatMeal } from '../../utils/formatMeal'
 import { z } from 'zod'
+import { getMealByIdSchema } from '../../docs/routes/meals/get-by-id'
 
 export async function getMealById(app: FastifyInstance) {
   app.get(
     '/:id',
-    { preHandler: [checkUserIdExist] },
+    { preHandler: [checkUserIdExist], schema: getMealByIdSchema },
     async (request, reply) => {
       const userId = request.cookies.userId
 

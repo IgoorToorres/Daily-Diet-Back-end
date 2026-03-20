@@ -3,9 +3,10 @@ import { z } from 'zod'
 import { randomUUID } from 'node:crypto'
 import { db } from '../../database'
 import { parseDateTime } from '../../utils/parseDateTime'
+import { createMealSchema } from '../../docs/routes/meals/create'
 
 export async function createMealRoute(app: FastifyInstance) {
-  app.post('/', async (request, reply) => {
+  app.post('/', { schema: createMealSchema }, async (request, reply) => {
     // cirando schema do zod para validacao dos dados do body
     const createMealBodySchema = z.object({
       name: z.string(),

@@ -2,11 +2,12 @@ import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { db } from '../../database'
 import { checkUserIdExist } from '../../middlewares/check-user-id-exist'
+import { deleteMealSchema } from '../../docs/routes/meals/delete'
 
 export async function deleteMeal(app: FastifyInstance) {
   app.delete(
     '/:id',
-    { preHandler: [checkUserIdExist] },
+    { preHandler: [checkUserIdExist], schema: deleteMealSchema },
     async (request, reply) => {
       const getParamsRequestSchema = z.object({
         id: z.string().uuid(),

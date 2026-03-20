@@ -1,11 +1,12 @@
 import { FastifyInstance } from 'fastify'
 import { checkUserIdExist } from '../../middlewares/check-user-id-exist'
 import { db } from '../../database'
+import { getMealPercentageSchema } from '../../docs/routes/meals/get-percentage'
 
 export async function getMealPercentage(app: FastifyInstance) {
   app.get(
     '/stats/percentage',
-    { preHandler: [checkUserIdExist] },
+    { preHandler: [checkUserIdExist], schema: getMealPercentageSchema },
     async (request) => {
       const userId = request.cookies.userId
 

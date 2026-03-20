@@ -3,11 +3,12 @@ import { checkUserIdExist } from '../../middlewares/check-user-id-exist'
 import { db } from '../../database'
 import { z } from 'zod'
 import { parseDateTime } from '../../utils/parseDateTime'
+import { updateMealSchema } from '../../docs/routes/meals/edit'
 
 export async function editMeal(app: FastifyInstance) {
   app.put(
     '/:id',
-    { preHandler: [checkUserIdExist] },
+    { preHandler: [checkUserIdExist], schema: updateMealSchema },
     async (request, reply) => {
       // criando schema do zod para validar o id pelos params da requisicao
       const getParamsRequestSchema = z.object({
